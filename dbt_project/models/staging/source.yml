@@ -1,0 +1,138 @@
+version: 2
+
+sources:
+  - name: raw_data # dbt에서 사용할 이름
+    database: my-dbtbq-test # gcp 빅쿼리 프로젝트 아이디
+    schema: my_dataset # 빅쿼리 데이터셋 이름
+    description: "US accidents 데이터"
+    
+    tables:
+      - name: raw_us_accidents # 빅쿼리 테이블 이름
+        description: "US accidents 원본 데이터 테이블_파티셔닝 안했음"
+        
+        loaded_at_field: Start_Time
+
+        columns:
+          - name: ID
+            description: "사고 ID"
+            tests:
+              - not_null
+
+          - name: Start_Time
+            description: "사고 발생 시간"
+            tests:
+              - not_null
+
+          - name: End_Time
+            description: "사고 종료 시간"
+
+          - name: Severity
+            description: "사고 심각도 (1~4 등급)"
+
+          - name: Distance_mi
+            description: "사고 거리 (마일)"
+
+          - name: Sunrise_Sunset
+            description: "사고 당시 낮/밤 여부"
+
+          - name: State
+            description: "사고가 발생한 주(state)"
+
+          - name: City
+            description: "사고가 발생한 도시"
+
+          - name: County
+            description: "사고 발생 카운티"
+
+          - name: Zipcode
+            description: "우편번호"
+
+          - name: Timezone
+            description: "사고 지역 시간대"
+
+          - name: Airport_Code
+            description: "가장 가까운 공항 코드"
+
+          - name: Start_Lat
+            description: "사고 시작 위도"
+
+          - name: Start_Lng
+            description: "사고 시작 경도"
+
+          - name: End_Lat
+            description: "사고 종료 위도"
+
+          - name: End_Lng
+            description: "사고 종료 경도"
+
+          - name: Street
+            description: "사고가 발생한 도로명"
+
+          - name: Weather_Timestamp
+            description: "날씨 정보가 기록된 시간"
+
+          - name: Temperature
+            description: "기온 (화씨)"
+
+          - name: Wind_Chill(F)
+            description: "풍속으로 인한 체감온도 (화씨)"
+
+          - name: Humidity_%
+            description: "습도 (%)"
+
+          - name: Pressure_in
+            description: "기압 (인치 단위)"
+
+          - name: Visibility
+            description: "가시거리 (마일)"
+
+          - name: Wind_Direction
+            description: "풍향"
+
+          - name: Wind_Speed
+            description: "풍속 (마일/시)"
+
+          - name: Precipitation
+            description: "강수량 (인치)"
+
+          - name: Weather_Condition
+            description: "날씨 상태"
+
+          - name: Amenity
+            description: "편의시설 근처 여부"
+
+          - name: Bump
+            description: "도로에 방지턱 여부"
+
+          - name: Crossing
+            description: "횡단보도 여부"
+
+          - name: Give_Way
+            description: "양보 표지판 여부"
+
+          - name: Junction
+            description: "교차로 여부"
+
+          - name: No_Exit
+            description: "막다른 골목 여부"
+
+          - name: Railway
+            description: "철도 여부"
+
+          - name: Roundabout
+            description: "원형교차로 여부"
+
+          - name: Station
+            description: "정류장 또는 역 근처 여부"
+
+          - name: Stop
+            description: "정지 표지 여부"
+
+          - name: Traffic_Calming
+            description: "고속방지 구조물 여부"
+
+          - name: Traffic_Signal
+            description: "신호등 존재 여부"
+
+          - name: Turning_Loop
+            description: "회차로 여부"

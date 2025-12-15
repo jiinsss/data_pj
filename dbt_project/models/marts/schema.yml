@@ -1,0 +1,36 @@
+version: 2
+
+models:
+  - name: fact_model
+    columns:
+      - name: ID
+        tests: [unique, not_null]
+      - name: dim_time_id
+        tests: [not_null]
+      - name: dim_location_id
+        tests: [not_null]
+      - name: dim_weather_id
+        tests: [not_null]
+      - name: dim_road_id
+        tests: [not_null]
+
+  - name: location_model
+    columns:
+      - name: dim_location_id
+        tests: [not_null]
+
+  - name: weather_model
+    columns:
+      - name: dim_weather_id
+        tests: [not_null]
+
+  - name: road_feature_model
+    columns:
+      - name: dim_road_id
+        tests: [not_null, unique]
+
+  - name: time_model
+    columns:
+      - name: dim_time_id
+        tests: [not_null]
+
