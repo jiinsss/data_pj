@@ -9,6 +9,6 @@ create table `myetl-474505.ecommerce.raw_events` (
   user_id INT64,
   user_session STRING
 )
-partition by date(_PARTITIONTIME)
-;
+PARTITION BY DATE(event_time);
+
 
