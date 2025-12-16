@@ -1,6 +1,6 @@
 create table `myetl-474505.ecommerce.fact`
   partition by event_date
-  cluster by category_id, brand as
+  cluster by category_id, brand,event_type as
   select
     event_date,
     event_time,
