@@ -16,7 +16,7 @@ yfinance API
  → BigQuery stock_raw (MERGE)
 
 
-스케줄링
+#### 스케줄링
 
 @daily
 
@@ -26,9 +26,9 @@ max_active_runs=1
 
 
 
-DAG 실행 날짜(data_interval_start) 기준으로 하루 단위 데이터 수집
+- DAG 실행 날짜(data_interval_start) 기준으로 하루 단위 데이터 수집
 
-비거래일(API 응답 없음)은 skip 처리
+- 비거래일(API 응답 없음)은 skip 처리
 
-BigQuery에서 인식 불가한 타입(list, tuple 등) 사전 검증
+- BigQuery에서 인식 불가한 타입(list, tuple 등) 사전 검증
 
