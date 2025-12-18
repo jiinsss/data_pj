@@ -28,7 +28,7 @@ day, dow, isoweek 등 시간 파생 컬럼 생성
 
 event_date 기준 Partitioning
 
-category_id, brand 기준 Clustering
+category_id, brand, event_type 기준 Clustering
 
 - Dimension 테이블
 
