@@ -9,7 +9,7 @@
 
 - 원본 CSV 데이터를 Parquet 포맷으로 변환
 
-- 원본 CSV와 Parquet 데이터를 폴더 단위로 분리하여 순서대로 적재
+- 원본 CSV와 Parquet 변환 데이터를 raw/processed 폴더로 분리해 관리 및 적재
 
 - GCS 업로드 후 BigQuery 적재 
 
