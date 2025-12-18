@@ -1,37 +1,42 @@
-### eCommerce 로그 기반 DW 구축
+### eCommerce 로그 데이터 DW 구축
 
-데이터 : Kaggle eCommerce 로그(oct,5.67GB)
+데이터 :eCommerce 로그데이터 (oct,5.67GB,csv)
 
 
 ### 1. 데이터 확인 및 적재
 
-Spark로 원본 CSV의 결측치와 스키마를 확인한 뒤 Parquet로 변환
+- Spark를 사용해 원본 CSV 데이터의 스키마 및 결측치 확인
 
-원본 CSV와 변환된 Parquet 파일을 폴더를 나눠 순서대로 적재
+- 원본 CSV 데이터를 Parquet 포맷으로 변환
 
-GCS 업로드 → BigQuery 
+- 원본 CSV와 Parquet 데이터를 폴더 단위로 분리하여 순서대로 적재
+
+- GCS 업로드 후 BigQuery 적재 
 
 
 ### 2. DW/DM 설계 (BigQuery)
 
-preprocessing : (no_brand, no_code 등 결측치 처리, kst 변환, day ,dow, isoweek 등 시간처리 ) 
+- Preprocessing (BigQuery SQL)
 
-fact: fact (event_date 파티셔닝, category_id, brand 클러스터링 )
+no_brand, no_code 등으로 결측치 처리
 
-dim_category, dim_session .. : dimension (카테고리 분류 및 파생칼럼 생성)
+타임존 KST 변환
+
+day, dow, isoweek 등 시간 파생 컬럼 생성
+
+- Fact 테이블
+
+event_date 기준 Partitioning
+
+category_id, brand 기준 Clustering
+
+- Dimension 테이블
+
+dim_category, dim_session 등
+
+카테고리 분류 및 파생 컬럼 생성
 
 
-### 3. 분석
+### 3.DW 활용
 
-퍼널 (세션, view → cart → purchase)
-
-초기 이탈 높음
-
-코호트
-
-첫 방문일 기준 D1, D7, D30 리텐션 계산
-
-D1 이후 급격한 유지율 하락 확인
-
-
--> 초기 사용자 경험이 가장 큰 병목으로 나타남
+설계된 DW를 기반으로 퍼널 분석 및 코호트 리텐션 분석 수행
