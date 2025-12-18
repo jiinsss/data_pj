@@ -31,5 +31,5 @@ max_active_runs=1
 
 + 비거래일(API 응답 없음)은 skip 처리
 
-+ BigQuery에서 인식 불가한 타입(list, tuple 등) 사전 검증
++ BigQuery 적재 시 문제가 될 수 있는 타입(list, tuple 등)을 사전 검증
 
