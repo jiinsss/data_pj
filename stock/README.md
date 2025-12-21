@@ -31,7 +31,7 @@ max_active_runs=1
 
 + logical_date.date() 기준으로 하루 데이터를 수집
 
-+ 비거래일(API 응답 없음)은 skip 처리
++ 거래일인데 데이터가 없으면 DAG을 실패시키고 알림을 보냄, 휴장일은 skip 처리
 
 + BigQuery 적재 시 문제가 될 수 있는 타입(list, tuple 등)을 사전 검증
 

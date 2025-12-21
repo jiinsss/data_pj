@@ -3,7 +3,7 @@ from airflow.operators.python import PythonOperator
 from airflow.providers.google.cloud.operators.bigquery import BigQueryInsertJobOperator
 from airflow.providers.google.cloud.hooks.bigquery import BigQueryHook
 from airflow.models import Variable
-from airflow.exceptions import AirflowSkipException
+from airflow.exceptions import AirflowSkipException, AirflowException
 
 from datetime import datetime, timedelta
 import yfinance as yf
@@ -61,12 +61,12 @@ def get_stock_to_staging(**context):
 
         if is_trading_day:
             send_slack_alert(
-                f"Stock Pipeline Warning\n"
+                f"Stock Pipeline failed\n"
                 f"Symbol: {SYMBOL}\n"
                 f"Date: {trade_date}\n"
                 f"Reason: No data returned on trading day"
             )
-            raise AirflowSkipException(
+            raise AirflowException(
                 f"No data returned on trading day: {trade_date}"
             )
         else:
