@@ -35,3 +35,4 @@ max_active_runs=1
 
 + BigQuery 적재 시 문제가 될 수 있는 타입(list, tuple 등)을 사전 검증
 
++ BigQuery 테이블은 DAG 실행 전에 SQL로 스키마를 선언하고 사전 생성
