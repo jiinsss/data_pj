@@ -10,7 +10,17 @@ import yfinance as yf
 import pandas as pd
 from google.cloud import bigquery
 
+import pandas_market_calendars as mcal
+import requests
+from pendulum import timezone
+NY = timezone("America/New_York")
+
 SYMBOL = "AAPL"
+
+
+def send_slack_alert(message: str):
+    url = Variable.get("SLACK_WEBHOOK_URL")
+    requests.post(url, json={"text": message}, timeout=10)
 
 
 def validate_dataframe(df):
@@ -29,9 +39,14 @@ def get_stock_to_staging(**context):
 
     staging_table = f"{project_id}.{dataset_id}.stock_staging"
 
-    execution_date = context["data_interval_start"].date()
-    start = execution_date.isoformat()
-    end = (execution_date + timedelta(days=1)).isoformat()
+    trade_date = (
+        context["logical_date"]
+        .date()
+        )
+
+    start = trade_date.isoformat()
+    end = (trade_date + timedelta(days=1)).isoformat()
+
 
     df = yf.download(
         SYMBOL,
@@ -41,7 +56,24 @@ def get_stock_to_staging(**context):
     )
 
     if df.empty:
-        raise AirflowSkipException(f"Market closed on {execution_date}")
+        nyse = mcal.get_calendar("NYSE")
+        is_trading_day = not nyse.valid_days(trade_date, trade_date).empty
+
+        if is_trading_day:
+            send_slack_alert(
+                f"Stock Pipeline Warning\n"
+                f"Symbol: {SYMBOL}\n"
+                f"Date: {trade_date}\n"
+                f"Reason: No data returned on trading day"
+            )
+            raise AirflowSkipException(
+                f"No data returned on trading day: {trade_date}"
+            )
+        else:
+            raise AirflowSkipException(
+                f"Market closed on {trade_date}"
+            )
+
 
     if isinstance(df.columns, pd.MultiIndex):
         df.columns = df.columns.get_level_values(0)
@@ -95,9 +127,9 @@ default_args = {
 
 with DAG(
     dag_id="api_to_bigquery_stock_pipeline",
-    start_date=datetime(2025, 1, 1),
-    schedule="@daily",
-    catchup=False,
+    start_date=datetime(2025, 1, 1,tzinfo=NY),
+    schedule="0 23 * * *",
+    catchup=True,
     max_active_runs=1,
     default_args=default_args,
     tags=["api", "bigquery"],
