@@ -1,0 +1,35 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.env
+
+# Airflow
+logs/
+airflow.db
+airflow.cfg
+webserver_config.py
+airflow_local_settings.py
+
+# Docker
+*.log
+.docker/
+docker-compose.override.yml
+postgres-db/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# GCP credentials
+**/key.json
+**/application_default_credentials.json
+
+# Temp
+*.tmp
+*.swp

@@ -10,14 +10,7 @@ import yfinance as yf
 import pandas as pd
 from google.cloud import bigquery
 
-
-project_id = Variable.get("BQ_PROJECT")
-dataset_id = Variable.get("BQ_DATASET")
-
-staging_table = f"{project_id}.{dataset_id}.stock_staging"
-raw_table = f"{project_id}.{dataset_id}.stock_raw"
-
-symbol = "AAPL"
+SYMBOL = "AAPL"
 
 
 def validate_dataframe(df):
@@ -31,22 +24,24 @@ def validate_dataframe(df):
 
 
 def get_stock_to_staging(**context):
-    execution_date = context["data_interval_start"].date()
+    project_id = Variable.get("BQ_PROJECT")
+    dataset_id = Variable.get("BQ_DATASET")
 
+    staging_table = f"{project_id}.{dataset_id}.stock_staging"
+
+    execution_date = context["data_interval_start"].date()
     start = execution_date.isoformat()
     end = (execution_date + timedelta(days=1)).isoformat()
 
     df = yf.download(
-        symbol,
+        SYMBOL,
         start=start,
         end=end,
         auto_adjust=False
     )
 
     if df.empty:
-        raise AirflowSkipException(
-            f"Market closed on {execution_date}"
-        )
+        raise AirflowSkipException(f"Market closed on {execution_date}")
 
     if isinstance(df.columns, pd.MultiIndex):
         df.columns = df.columns.get_level_values(0)
@@ -62,8 +57,9 @@ def get_stock_to_staging(**context):
               "Volume": "volume",
           })
     )
+
     df["date"] = pd.to_datetime(df["date"]).dt.date
-    df["symbol"] = symbol
+    df["symbol"] = SYMBOL
     df = df[["symbol", "date", "open", "high", "low", "close", "volume"]]
 
     validate_dataframe(df)
@@ -81,9 +77,9 @@ def get_stock_to_staging(**context):
     job.result()
 
 
-MERGE_SQL = f"""
-MERGE `{raw_table}` T
-USING `{staging_table}` S
+MERGE_SQL = """
+MERGE `{{ var.value.BQ_PROJECT }}.{{ var.value.BQ_DATASET }}.stock_raw` T
+USING `{{ var.value.BQ_PROJECT }}.{{ var.value.BQ_DATASET }}.stock_staging` S
 ON T.symbol = S.symbol AND T.date = S.date
 WHEN NOT MATCHED THEN
   INSERT (symbol, date, open, high, low, close, volume)
@@ -100,11 +96,11 @@ default_args = {
 with DAG(
     dag_id="api_to_bigquery_stock_pipeline",
     start_date=datetime(2025, 1, 1),
-    schedule_interval="@daily",
-    catchup=True,
+    schedule="@daily",
+    catchup=False,
     max_active_runs=1,
     default_args=default_args,
-    tags=["api", "bigquery", "incremental"],
+    tags=["api", "bigquery"],
 ) as dag:
 
     get_api = PythonOperator(

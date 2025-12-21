@@ -1,0 +1,53 @@
+services:
+  postgres:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: airflow
+      POSTGRES_PASSWORD: airflow
+      POSTGRES_DB: airflow
+    volumes:
+      - postgres-db:/var/lib/postgresql/data
+
+  airflow-webserver:
+    image: apache/airflow:2.9.3-python3.10
+    environment:
+      AIRFLOW__CORE__EXECUTOR: LocalExecutor
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres:5432/airflow
+      AIRFLOW__CORE__FERNET_KEY: ${AIRFLOW__CORE__FERNET_KEY}
+      AIRFLOW__WEBSERVER__SECRET_KEY: webserver-secret-key
+      _PIP_ADDITIONAL_REQUIREMENTS: >
+        yfinance
+        pandas
+        google-cloud-bigquery
+        apache-airflow-providers-google
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ./logs:/opt/airflow/logs
+    ports:
+      - "8080:8080"
+    command: webserver
+    depends_on:
+      - postgres
+
+  airflow-scheduler:
+    image: apache/airflow:2.9.3-python3.10
+    environment:
+      AIRFLOW__CORE__EXECUTOR: LocalExecutor
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres:5432/airflow
+      AIRFLOW__CORE__FERNET_KEY: ${AIRFLOW__CORE__FERNET_KEY}
+      GOOGLE_APPLICATION_CREDENTIALS: /secrets/key.json 
+      _PIP_ADDITIONAL_REQUIREMENTS: >
+        yfinance
+        pandas
+        google-cloud-bigquery
+        apache-airflow-providers-google
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ./logs:/opt/airflow/logs
+      - ./secrets:/secrets
+    command: scheduler
+    depends_on:
+      - postgres
+
+volumes:
+  postgres-db:
