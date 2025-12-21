@@ -15,14 +15,17 @@ services:
       AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres:5432/airflow
       AIRFLOW__CORE__FERNET_KEY: ${AIRFLOW__CORE__FERNET_KEY}
       AIRFLOW__WEBSERVER__SECRET_KEY: webserver-secret-key
+      GOOGLE_APPLICATION_CREDENTIALS: /secrets/key.json
       _PIP_ADDITIONAL_REQUIREMENTS: >
         yfinance
         pandas
         google-cloud-bigquery
         apache-airflow-providers-google
+        pandas_market_calendars
     volumes:
       - ./dags:/opt/airflow/dags
       - ./logs:/opt/airflow/logs
+      - ./secrets:/secrets
     ports:
       - "8080:8080"
     command: webserver
@@ -41,6 +44,7 @@ services:
         pandas
         google-cloud-bigquery
         apache-airflow-providers-google
+        pandas_market_calendars
     volumes:
       - ./dags:/opt/airflow/dags
       - ./logs:/opt/airflow/logs
