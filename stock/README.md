@@ -19,7 +19,7 @@ yfinance API
 
 #### 스케줄링
 
-@daily
+"0 23 * * *",
 
 catchup=True
 
