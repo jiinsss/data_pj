@@ -19,7 +19,7 @@ yfinance API
 
 #### 스케줄링
 
-"0 23 * * *",
+0 23 * * *
 
 catchup=True
 
