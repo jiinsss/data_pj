@@ -27,7 +27,7 @@ max_active_runs=1
 
 
 
-+ DAG 실행 날짜(data_interval_start) 기준으로 하루 단위 데이터 수집
++ logical_date.date() 기준으로 하루 데이터를 수집
 
 + 비거래일(API 응답 없음)은 skip 처리
 
