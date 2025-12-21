@@ -5,6 +5,8 @@
 
 - Airflow로 배치 스케줄링하여 BigQuery에 증분 적재
 
+- Docker Compose로 Airflow(LocalExecutor + Postgres) 환경 구성
+
 
 #### 파이프라인
 
